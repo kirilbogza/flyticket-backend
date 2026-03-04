@@ -34,12 +34,6 @@ chore:    maintenance, non-feature work
 revert:   revert previous commit
 ```
 
-## Techincal choises:
-
-```markdown
-db -> postgreSQL | why? |
-```
-
 ## Plan:
 
 ```markdown
