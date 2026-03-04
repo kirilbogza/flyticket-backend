@@ -1,0 +1,24 @@
+{
+  "name": "flyticket_backend",
+  "version": "1.0.0",
+  "description": "Flight provider backend API: Admins can create flights with timestamps, cities, and seat counts. Third-party providers can query tickets by date and cities, receiving exact departure and arrival times with pricing.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirilbogza/flyticket-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kirilbogza/flyticket-backend/issues"
+  },
+  "homepage": "https://github.com/kirilbogza/flyticket-backend#readme",
+  "dependencies": {
+    "fastify": "^5.7.4"
+  }
+}
