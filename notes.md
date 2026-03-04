@@ -6,6 +6,18 @@
 git reset --hard origin/<branch-name>
 ```
 
+### Go back one commit:
+
+```bash
+git reset --hard HEAD~1
+```
+
+#### Then:
+
+```bash
+git push --force
+```
+
 ### Usefull words:
 
 ```bash
