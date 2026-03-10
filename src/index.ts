@@ -7,9 +7,8 @@ import adminRoutes from './routes/admin';
 import partnerRoutes from './routes/partner'; // skapar struktur i förväg, from draw.io
 import publicRoutes from './routes/public';
 import { connectDB, getPool } from './db';
-import dotenv from 'dotenv';
 
-dotenv.config();
+//dotenv.config() Dont need it anymore! Detailed info on bug in git:
 
 const server: FastifyInstance = fastify({ logger: true });
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
