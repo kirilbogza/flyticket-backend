@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as flightService from '../services/flightService';
-import { CreateFlightInput } from '../types/flight';
+import { CreateFlightInput, UpdateFlightInput } from '../types/flight';
 
 export async function createFlight(
   request: FastifyRequest<{ Body: CreateFlightInput }>,
@@ -40,7 +40,7 @@ export async function getFlightById(
 }
 
 export async function updateFlight(
-  request: FastifyRequest<{ Params: { flightId: string }; Body: any }>,
+  request: FastifyRequest<{ Params: { flightId: string }; Body: UpdateFlightInput }>,
   reply: FastifyReply
 ) {
   try {
