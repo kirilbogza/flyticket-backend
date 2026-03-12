@@ -1,7 +1,7 @@
 import * as flightRepository from '../repository/flightRepository';
 import { CreateFlightInput, UpdateFlightInput } from '../types/flight';
 
-export async function createFlight(data: CreateFlightInput) {
+function validateCreateFlightInput(data: CreateFlightInput) {
   if (new Date(data.departure) >= new Date(data.arrival)) {
     throw new Error('Departure must be before arrival!');
   }
@@ -11,6 +11,10 @@ export async function createFlight(data: CreateFlightInput) {
   if (data.base_price <= 0) {
     throw new Error('Price must be positive!');
   }
+}
+
+export async function createFlight(data: CreateFlightInput) {
+  validateCreateFlightInput(data)
 
   return await flightRepository.createFlight(data);
 }
