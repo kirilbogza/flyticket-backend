@@ -16,6 +16,12 @@ function validateCreateFlightInput(data: CreateFlightInput) {
 export async function createFlight(data: CreateFlightInput) {
   validateCreateFlightInput(data)
 
+  // checkSOmethingElse
+
+  // createFlight object
+
+  // repository.saveFlight(newFlight)
+
   return await flightRepository.createFlight(data);
 }
 
