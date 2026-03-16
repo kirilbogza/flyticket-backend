@@ -7,6 +7,7 @@ import adminRoutes from './routes/admin';
 import partnerRoutes from './routes/partner'; // skapar struktur i förväg, from draw.io
 import publicRoutes from './routes/public';
 import { connectDB, getPool } from './db';
+import { fetchApiKeys } from './caches/apyKeys';
 
 //dotenv.config() Dont need it anymore! Detailed info on bug in git:
 
@@ -16,6 +17,7 @@ const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 async function start() {
   try {
     await connectDB();
+    await fetchApiKeys();
     const pool = getPool();
 
     // decorate with pg pool
