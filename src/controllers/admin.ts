@@ -1,6 +1,19 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as flightService from '../services/flightService';
 import { CreateFlightInput, UpdateFlightInput } from '../types/flight';
+import * as partnerService from '../services/partnerService';
+
+export async function createPartner(
+  request: FastifyRequest<{ Body: { name: string; api_key: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const partner = await partnerService.createPartner(request.body);
+    reply.status(201).send(partner);
+  } catch (err: any) {
+    reply.status(400).send({ error: err.message });
+  }
+}
 
 export async function createFlight(
   request: FastifyRequest<{ Body: CreateFlightInput }>,
