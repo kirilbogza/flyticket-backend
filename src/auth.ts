@@ -1,6 +1,7 @@
 import fastifyPlugin from 'fastify-plugin';
 import fastifyJwt from '@fastify/jwt';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { getPartnerByApiKey } from './caches/apyKeys';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -48,21 +49,14 @@ async function auth(server: FastifyInstance) {
         return reply.status(401).send({ error: 'API key required' });
       }
 
-      try {
-        const result = await server.pg.query(
-          'SELECT id, name FROM partners WHERE api_key = $1',
-          [apiKey]
-        );
-        if (result.rows.length === 0) {
-          return reply.status(403).send({ error: 'Invalid API key' });
-        }
-        request.partner = result.rows[0];
-      } catch (err) {
-        server.log.error(err);
-        reply.status(500).send({ error: 'Internal server error' });
+      const partner = getPartnerByApiKey(apiKey);
+      if (!partner) {
+        return reply.status(401).send({ error: 'Invalid API key' });
       }
+
+      request.partner = partner;
     }
-  );
+    );
 }
 
 export default fastifyPlugin(auth);
