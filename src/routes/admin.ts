@@ -8,6 +8,7 @@ export default async function adminRoutes(
   //if only admin is authenticated you will get access to routes.
   server.addHook('preHandler', server.authenticateAdmin);
 
+  server.post('/partners', adminController.createPartner); 
   server.post('/flights', adminController.createFlight);
   server.get('/flights', adminController.getFlights);
   server.get('/flights/:flightId', adminController.getFlightById);
