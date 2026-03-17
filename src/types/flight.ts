@@ -31,3 +31,7 @@ export interface UpdateFlightInput {
   base_price?: number;
   status?: "active" | "cancelled";
 }
+
+export interface FlightWithAvailability extends Flight {
+  seats_left: number;
+}
