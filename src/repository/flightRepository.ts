@@ -1,5 +1,6 @@
 import { getPool } from "../db";
 import { Flight, CreateFlightInput, UpdateFlightInput } from "../types/flight";
+import { FlightWithAvailability } from '../types/flight';
 
 export async function createFlight(data: CreateFlightInput): Promise<Flight> {
   const pool = getPool();
@@ -60,4 +61,21 @@ export async function updateFlight(
 
 export async function cancelFlight(id: number): Promise<Flight | null> {
   return updateFlight(id, { status: "cancelled" });
+}
+
+export async function searchFlights(params: { date: string; from: string; to: string }): Promise<FlightWithAvailability[]> {
+  const pool = getPool();
+  const result = await pool.query(
+    `SELECT f.*, 
+            (f.capacity - COALESCE(SUM(b.seats), 0)) AS seats_left
+     FROM flights f
+     LEFT JOIN bookings b ON f.id = b.flight_id AND b.status = 'confirmed'
+     WHERE DATE(f.departure) = $1
+       AND f.from_city = $2
+       AND f.to_city = $3
+       AND f.status = 'active'
+     GROUP BY f.id`,
+    [params.date, params.from, params.to]
+  );
+  return result.rows;
 }
