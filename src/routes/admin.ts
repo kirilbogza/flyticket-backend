@@ -5,6 +5,10 @@ export default async function adminRoutes(
   server: FastifyInstance,
   options: FastifyPluginOptions
 ) {
+  // Public routes (no auth)
+  server.post('/register', adminController.registerAdmin);
+  server.post('/login', adminController.loginAdmin);
+  
   //if only admin is authenticated you will get access to routes.
   server.addHook('preHandler', server.authenticateAdmin);
 
