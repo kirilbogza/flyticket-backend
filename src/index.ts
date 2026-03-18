@@ -4,7 +4,7 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import auth from './auth';               
 import adminRoutes from './routes/admin';
-import partnerRoutes from './routes/partner'; // skapar struktur i förväg, from draw.io
+import partnerRoutes from './routes/partner';
 import publicRoutes from './routes/public';
 import { connectDB, getPool } from './db';
 import { fetchApiKeys } from './caches/apiKeys';
