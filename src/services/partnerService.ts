@@ -1,7 +1,7 @@
 import * as partnerRepository from '../repository/partnerRepository';
 import * as flightRepository from '../repository/flightRepository';
 import * as bookingRepository from '../repository/bookingRepository';
-import { CreateBookingInput, FlightSearchParams } from '../types/booking';import { addPartnerToCache } from '../caches/apyKeys';
+import { CreateBookingInput, FlightSearchParams } from '../types/booking';import { addPartnerToCache } from '../caches/apiKeys';
 
 export async function createPartner(data: { name: string; api_key: string }) {
   if (!data.name || !data.api_key) {

@@ -7,7 +7,7 @@ import adminRoutes from './routes/admin';
 import partnerRoutes from './routes/partner'; // skapar struktur i förväg, from draw.io
 import publicRoutes from './routes/public';
 import { connectDB, getPool } from './db';
-import { fetchApiKeys } from './caches/apyKeys';
+import { fetchApiKeys } from './caches/apiKeys';
 import oauthRoutes from './routes/oauth';
 
 //dotenv.config() Dont need it anymore! Detailed info on bug in git:

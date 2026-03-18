@@ -1,7 +1,7 @@
 import fastifyPlugin from 'fastify-plugin';
 import fastifyJwt from '@fastify/jwt';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { getPartnerByApiKey } from './caches/apyKeys';
+import { getPartnerByApiKey, getPartnerById } from './caches/apiKeys';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -41,22 +41,46 @@ async function auth(server: FastifyInstance) {
     }
   );
 
-  server.decorate(
-    'authenticatePartner',
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      const apiKey = request.headers['x-api-key'];
-      if (!apiKey || typeof apiKey !== 'string') {
-        return reply.status(401).send({ error: 'API key required' });
+server.decorate(
+  'authenticatePartner',
+  async (request: FastifyRequest, reply: FastifyReply) => {
+    
+    // 1. Try Bearer token (OAuth2)
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const decoded = await request.jwtVerify() as any;
+        if (decoded.scope !== 'partner') {
+          return reply.status(403).send({ error: 'Forbidden: Invalid scope' });
+        }
+        
+        // use cache
+        const partner = getPartnerById(decoded.sub);
+        
+        if (!partner) {
+          return reply.status(401).send({ error: 'Invalid token' });
+        }
+        request.partner = partner;
+        return;
+      } catch (err) {
+        return reply.status(401).send({ error: 'Invalid token' });
       }
-
-      const partner = getPartnerByApiKey(apiKey);
-      if (!partner) {
-        return reply.status(401).send({ error: 'Invalid API key' });
-      }
-
-      request.partner = partner;
     }
-    );
+
+    // 2. Fallback
+    const apiKey = request.headers['x-api-key'];
+    if (!apiKey || typeof apiKey !== 'string') {
+      return reply.status(401).send({ error: 'Authentication required' });
+    }
+
+    const partner = getPartnerByApiKey(apiKey);
+    if (!partner) {
+      return reply.status(401).send({ error: 'Invalid API key' });
+    }
+    request.partner = partner;
+  }
+);
+
 }
 
 export default fastifyPlugin(auth);
