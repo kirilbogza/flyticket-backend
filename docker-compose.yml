@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: flight_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-flightuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-flightpass}
+      POSTGRES_DB: ${POSTGRES_DB:-flightdb}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-flightuser}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: flight_api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-flightuser}:${POSTGRES_PASSWORD:-flightpass}@postgres:5432/${POSTGRES_DB:-flightdb}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      PORT: 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
