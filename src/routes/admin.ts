@@ -18,4 +18,9 @@ export default async function adminRoutes(
   server.get('/flights/:flightId', adminController.getFlightById);
   server.put('/flights/:flightId', adminController.updateFlight);
   server.delete('/flights/:flightId', adminController.cancelFlight);
+
+  server.get('/partners', adminController.getPartners);
+  server.get('/partners/:partnerId', adminController.getPartnerById);
+  server.put('/partners/:partnerId', adminController.updatePartner);
+  server.delete('/partners/:partnerId', adminController.deletePartner);
 }
