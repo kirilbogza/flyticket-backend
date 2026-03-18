@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import * as flightService from '../services/flightService';
 import { CreateFlightInput, UpdateFlightInput } from '../types/flight';
 import * as partnerService from '../services/partnerService';
+import * as adminService from '../services/adminService';
 
 export async function createPartner(
   request: FastifyRequest<{ Body: { name: string; api_key: string } }>,
@@ -75,5 +76,40 @@ export async function cancelFlight(
     reply.send(flight);
   } catch (err: any) {
     reply.status(400).send({ error: err.message });
+  }
+}
+
+export async function registerAdmin(
+  request: FastifyRequest<{ Body: { email: string; password: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const admin = await adminService.registerAdmin(request.body.email, request.body.password);
+    reply.status(201).send({ id: admin.id, email: admin.email });
+  } catch (err: any) {
+    reply.status(400).send({ error: err.message });
+  }
+}
+
+export async function loginAdmin(
+  request: FastifyRequest<{ Body: { email: string; password: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const admin = await adminService.loginAdmin(request.body.email, request.body.password);
+    
+    const token = await reply.jwtSign({
+      id: admin.id,
+      email: admin.email,
+      role: 'admin',
+      type: 'access'
+    }, { expiresIn: '1d' });
+
+    reply.send({
+      access_token: token,
+      admin: { id: admin.id, email: admin.email }
+    });
+  } catch (err: any) {
+    reply.status(401).send({ error: err.message });
   }
 }
