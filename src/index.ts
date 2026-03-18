@@ -8,6 +8,7 @@ import partnerRoutes from './routes/partner'; // skapar struktur i förväg, fro
 import publicRoutes from './routes/public';
 import { connectDB, getPool } from './db';
 import { fetchApiKeys } from './caches/apyKeys';
+import oauthRoutes from './routes/oauth';
 
 //dotenv.config() Dont need it anymore! Detailed info on bug in git:
 
@@ -39,6 +40,7 @@ async function start() {
     await server.register(publicRoutes);   //health check 🟢
     await server.register(adminRoutes, { prefix: '/admin' });
     await server.register(partnerRoutes, { prefix: '/partner' });
+    await server.register(oauthRoutes);
 
     await server.listen({ host: '0.0.0.0', port });
     console.log(`listening at http://localhost:${port}`);
