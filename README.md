@@ -26,11 +26,63 @@ npm install
 
 - Install Docker to your local machine or setup a postgreSQL database yourself
 
-- Create following tables:
+- Interact with the database, ex: Datagrip to create following tables with code below:
 
-```markdown
-Admin
-Partner
+```sql
+-- Admins
+CREATE TABLE IF NOT EXISTS admins (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role VARCHAR(50) DEFAULT 'admin',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Partners
+CREATE TABLE IF NOT EXISTS partners (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    api_key VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Flights
+CREATE TABLE IF NOT EXISTS flights (
+    id SERIAL PRIMARY KEY,
+    flight_code VARCHAR(50) UNIQUE NOT NULL,
+    departure TIMESTAMP NOT NULL,
+    arrival TIMESTAMP NOT NULL,
+    from_city VARCHAR(100) NOT NULL,
+    to_city VARCHAR(100) NOT NULL,
+    capacity INT NOT NULL,
+    base_price DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Bookings
+CREATE TABLE IF NOT EXISTS bookings (
+    id SERIAL PRIMARY KEY,
+    booking_reference VARCHAR(50) UNIQUE NOT NULL,
+    flight_id INT REFERENCES flights(id),
+    partner_id INT REFERENCES partners(id),
+    passenger_name VARCHAR(255) NOT NULL,
+    passenger_email VARCHAR(255),
+    seats INT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    idempotency_key VARCHAR(255) UNIQUE,
+    status VARCHAR(20) DEFAULT 'confirmed',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Price history (if you still want it)
+CREATE TABLE IF NOT EXISTS price_history (
+    id SERIAL PRIMARY KEY,
+    flight_id INT REFERENCES flights(id),
+    price DECIMAL(10,2) NOT NULL,
+    changed_at TIMESTAMP DEFAULT NOW()
+);
 ```
 
 - Run the database
@@ -57,7 +109,7 @@ Requests overview:
 
 - Request-body example:
 
-```bash
+```javascript
 {
   "flight_code": "SK123",
   "departure": "2025-06-01T08:00:00Z",
