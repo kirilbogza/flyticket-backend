@@ -97,16 +97,23 @@ export async function loginAdmin(
 ) {
   try {
     const admin = await adminService.loginAdmin(request.body.email, request.body.password);
-    
-    const token = await reply.jwtSign({
+    // Access token:
+    const accessToken = await reply.jwtSign({
       id: admin.id,
       email: admin.email,
       role: 'admin',
       type: 'access'
-    }, { expiresIn: '1d' });
+    }, { expiresIn: '15m' });
+
+    // Refresh token:
+    const refreshToken = await reply.jwtSign({
+      id: admin.id,
+      type: 'refresh'
+    }, { expiresIn: '7d' });
 
     reply.send({
-      access_token: token,
+      access_token: accessToken,
+      refresh_token: refreshToken,
       admin: { id: admin.id, email: admin.email }
     });
   } catch (err: any) {
