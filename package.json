@@ -4,6 +4,7 @@
   "description": "Flight provider backend API: Admins can create flights with timestamps, cities, and seat counts. Third-party providers can query tickets by date and cities, receiving exact departure and arrival times with pricing.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only -r dotenv/config src/index.ts"
   },

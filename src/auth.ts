@@ -22,7 +22,7 @@ if (!secretKey) throw new Error('JWT_SECRET_KEY must be set');
 
 async function auth(server: FastifyInstance) {
   await server.register(fastifyJwt, {
-    secret: secretKey,
+    secret: secretKey!,
     sign: { expiresIn: '1d' }
   });
 
