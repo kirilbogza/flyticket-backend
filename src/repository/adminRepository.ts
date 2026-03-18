@@ -1,5 +1,5 @@
 import { getPool } from '../db';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 export interface Admin {
   id: number;
@@ -24,4 +24,10 @@ export async function createAdmin(email: string, password: string): Promise<Admi
     [email, password_hash, 'admin']
   );
   return result.rows[0];
+}
+
+export async function findAdminById(id: number): Promise<Admin | null> {
+  const pool = getPool();
+  const result = await pool.query('SELECT * FROM admins WHERE id = $1', [id]);
+  return result.rows[0] || null;
 }

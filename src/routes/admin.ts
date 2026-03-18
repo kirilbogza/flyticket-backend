@@ -1,26 +1,96 @@
-import { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import * as adminController from '../controllers/admin';
 
-export default async function adminRoutes(
-  server: FastifyInstance,
-  options: FastifyPluginOptions
-) {
+export default async function adminRoutes(server: FastifyInstance) {
   // Public routes (no auth)
-  server.post('/register', adminController.registerAdmin);
-  server.post('/login', adminController.loginAdmin);
-  
-  //if only admin is authenticated you will get access to routes.
-  server.addHook('preHandler', server.authenticateAdmin);
+  server.route({
+    method: 'POST',
+    url: '/register',
+    handler: adminController.registerAdmin
+  });
 
-  server.post('/partners', adminController.createPartner); 
-  server.post('/flights', adminController.createFlight);
-  server.get('/flights', adminController.getFlights);
-  server.get('/flights/:flightId', adminController.getFlightById);
-  server.put('/flights/:flightId', adminController.updateFlight);
-  server.delete('/flights/:flightId', adminController.cancelFlight);
+  server.route({
+    method: 'POST',
+    url: '/login',
+    handler: adminController.loginAdmin
+  });
 
-  server.get('/partners', adminController.getPartners);
-  server.get('/partners/:partnerId', adminController.getPartnerById);
-  server.put('/partners/:partnerId', adminController.updatePartner);
-  server.delete('/partners/:partnerId', adminController.deletePartner);
+  server.route({
+    method: 'POST',
+    url: '/refresh',
+    handler: adminController.refreshToken
+  });
+
+  // Protected routes (with preHandler)
+  const protectedHandler = { preHandler: [server.authenticateAdmin] };
+
+  server.route({
+    method: 'POST',
+    url: '/partners',
+    ...protectedHandler,
+    handler: adminController.createPartner
+  });
+
+  server.route({
+    method: 'GET',
+    url: '/partners',
+    ...protectedHandler,
+    handler: adminController.getPartners
+  });
+
+  server.route({
+    method: 'GET',
+    url: '/partners/:partnerId',
+    ...protectedHandler,
+    handler: adminController.getPartnerById
+  });
+
+  server.route({
+    method: 'PUT',
+    url: '/partners/:partnerId',
+    ...protectedHandler,
+    handler: adminController.updatePartner
+  });
+
+  server.route({
+    method: 'DELETE',
+    url: '/partners/:partnerId',
+    ...protectedHandler,
+    handler: adminController.deletePartner
+  });
+
+  server.route({
+    method: 'POST',
+    url: '/flights',
+    ...protectedHandler,
+    handler: adminController.createFlight
+  });
+
+  server.route({
+    method: 'GET',
+    url: '/flights',
+    ...protectedHandler,
+    handler: adminController.getFlights
+  });
+
+  server.route({
+    method: 'GET',
+    url: '/flights/:flightId',
+    ...protectedHandler,
+    handler: adminController.getFlightById
+  });
+
+  server.route({
+    method: 'PUT',
+    url: '/flights/:flightId',
+    ...protectedHandler,
+    handler: adminController.updateFlight
+  });
+
+  server.route({
+    method: 'DELETE',
+    url: '/flights/:flightId',
+    ...protectedHandler,
+    handler: adminController.cancelFlight
+  });
 }

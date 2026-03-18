@@ -1,5 +1,5 @@
 import * as adminRepository from '../repository/adminRepository';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 export async function registerAdmin(email: string, password: string) {
   const existing = await adminRepository.findAdminByEmail(email);

@@ -1,8 +1,17 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { getPool } from '../db';
 
-export async function token(request: FastifyRequest, reply: FastifyReply) {
-  const { grant_type, client_id, client_secret } = request.body as any;
+interface OAuthTokenBody {
+  grant_type: string;
+  client_id: string;
+  client_secret: string;
+}
+
+export async function token(
+  request: FastifyRequest<{ Body: OAuthTokenBody }>,
+  reply: FastifyReply
+) {
+  const { grant_type, client_id, client_secret } = request.body;
 
   if (grant_type !== 'client_credentials') {
     return reply.status(400).send({ error: 'unsupported_grant_type' });

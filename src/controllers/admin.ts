@@ -3,6 +3,7 @@ import * as flightService from '../services/flightService';
 import { CreateFlightInput, UpdateFlightInput } from '../types/flight';
 import * as partnerService from '../services/partnerService';
 import * as adminService from '../services/adminService';
+import * as adminRepository from '../repository/adminRepository';
 
 export async function createPartner(
   request: FastifyRequest<{ Body: { name: string; api_key: string } }>,
@@ -166,5 +167,40 @@ export async function deletePartner(
     reply.send(result);
   } catch (err: any) {
     reply.status(404).send({ error: err.message });
+  }
+}
+
+export async function refreshToken(
+  request: FastifyRequest<{ Body: { refresh_token: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const { refresh_token } = request.body;
+    if (!refresh_token) {
+      return reply.status(400).send({ error: 'Refresh token required' });
+    }
+
+    const decoded = await request.jwtVerify() as any;
+    if (decoded.type !== 'refresh') {
+      return reply.status(401).send({ error: 'Invalid refresh token' });
+    }
+
+    // Find admin by id:
+    const admin = await adminRepository.findAdminById(decoded.id);
+    if (!admin) {
+      return reply.status(401).send({ error: 'Admin not found' });
+    }
+
+    //new access token:
+    const newAccessToken = await reply.jwtSign({
+      id: admin.id,
+      email: admin.email,
+      role: 'admin',
+      type: 'access'
+    }, { expiresIn: '15m' });
+
+    reply.send({ access_token: newAccessToken });
+  } catch (err) {
+    reply.status(401).send({ error: 'Invalid refresh token' });
   }
 }
