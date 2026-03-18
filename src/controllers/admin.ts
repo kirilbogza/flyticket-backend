@@ -113,3 +113,51 @@ export async function loginAdmin(
     reply.status(401).send({ error: err.message });
   }
 }
+
+export async function getPartners(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const partners = await partnerService.getAllPartners();
+    reply.send(partners);
+  } catch (err: any) {
+    reply.status(500).send({ error: err.message });
+  }
+}
+
+export async function getPartnerById(
+  request: FastifyRequest<{ Params: { partnerId: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const id = parseInt(request.params.partnerId);
+    const partner = await partnerService.getPartnerById(id);
+    reply.send(partner);
+  } catch (err: any) {
+    reply.status(404).send({ error: err.message });
+  }
+}
+
+export async function updatePartner(
+  request: FastifyRequest<{ Params: { partnerId: string }; Body: { name?: string; api_key?: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const id = parseInt(request.params.partnerId);
+    const partner = await partnerService.updatePartner(id, request.body);
+    reply.send(partner);
+  } catch (err: any) {
+    reply.status(400).send({ error: err.message });
+  }
+}
+
+export async function deletePartner(
+  request: FastifyRequest<{ Params: { partnerId: string } }>,
+  reply: FastifyReply
+) {
+  try {
+    const id = parseInt(request.params.partnerId);
+    const result = await partnerService.deletePartner(id);
+    reply.send(result);
+  } catch (err: any) {
+    reply.status(404).send({ error: err.message });
+  }
+}
