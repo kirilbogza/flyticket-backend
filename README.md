@@ -24,6 +24,22 @@ npm install
 
 ### Usage Instructions: 
 
+#### Using Docker
+
+1. Install Docker and Docker Compose
+1. Create .env-file (see .env.example)
+1. Run with Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+The app will be available at http://localhost:3000
+
+***
+
+#### Manual Setup (no Docker)
+
 - Install Docker to your local machine or setup a postgreSQL database yourself
 
 - Interact with the database, ex: Datagrip to create following tables with code below:
